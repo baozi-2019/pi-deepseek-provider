@@ -4,7 +4,7 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent"
 
-import { DEEPSEEK_BALANCE_ENTRY, makeEmit } from "../src/emit.ts"
+import { DEEPSEEK_USAGE_ENTRY, makeEmit } from "../src/emit.ts"
 
 function uiContext(mode: "tui" | "rpc", notifications: { text: string; kind: string }[]) {
   return {
@@ -19,7 +19,7 @@ function uiContext(mode: "tui" | "rpc", notifications: { text: string; kind: str
 }
 
 describe("command output", () => {
-  it("appends TUI balance entries immediately without sendMessage or notify", () => {
+  it("appends TUI usage entries immediately without sendMessage or notify", () => {
     const appended: { type: string; data: unknown }[] = []
     const notifications: { text: string; kind: string }[] = []
     const pi = {
@@ -34,11 +34,11 @@ describe("command output", () => {
     makeEmit(
       pi,
       uiContext("tui", notifications),
-      DEEPSEEK_BALANCE_ENTRY,
+      DEEPSEEK_USAGE_ENTRY,
     )("DeepSeek balance: available", "info")
 
     assert.deepEqual(appended, [
-      { type: DEEPSEEK_BALANCE_ENTRY, data: { text: "DeepSeek balance: available" } },
+      { type: DEEPSEEK_USAGE_ENTRY, data: { text: "DeepSeek balance: available" } },
     ])
     assert.deepEqual(notifications, [])
   })
@@ -53,8 +53,8 @@ describe("command output", () => {
       },
     } as unknown as ExtensionAPI
 
-    makeEmit(pi, uiContext("rpc", rpcNotifications), DEEPSEEK_BALANCE_ENTRY)("balance", "info")
-    makeEmit(pi, uiContext("tui", tuiNotifications), DEEPSEEK_BALANCE_ENTRY)("wait", "warning")
+    makeEmit(pi, uiContext("rpc", rpcNotifications), DEEPSEEK_USAGE_ENTRY)("balance", "info")
+    makeEmit(pi, uiContext("tui", tuiNotifications), DEEPSEEK_USAGE_ENTRY)("wait", "warning")
 
     assert.deepEqual(appended, [])
     assert.deepEqual(rpcNotifications, [{ text: "balance", kind: "info" }])

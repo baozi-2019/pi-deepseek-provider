@@ -274,7 +274,7 @@ async function waitForCondition(predicate, timeoutMs = 5_000) {
 
 try {
   // -- Session 1: full fixture, command registration, throttle -------------
-  console.log("[pi-local] /deepseek-balance renders both currencies through the real extension")
+  console.log("[pi-local] /deepseek-usage renders both currencies through the real extension")
   scenario = "full"
   const first = startRpcSession()
 
@@ -283,8 +283,10 @@ try {
     (event) => event.type === "response" && event.id === "commands",
   )
   const commandNames = commandsResponse.data?.commands?.map((command) => command.name) ?? []
-  assert.ok(commandNames.includes("deepseek-balance"), JSON.stringify(commandNames))
+  assert.ok(commandNames.includes("deepseek-usage"), JSON.stringify(commandNames))
   assert.ok(commandNames.includes("deepseek-refresh"), JSON.stringify(commandNames))
+  // The pre-rename command name must be gone, not aliased.
+  assert.ok(!commandNames.includes("deepseek-balance"), JSON.stringify(commandNames))
 
   console.log("[pi-local] the deepseek provider exposes its four static models")
   first.send({ id: "models", type: "get_available_models" })
@@ -301,7 +303,7 @@ try {
   assert.ok(deepseekModels.every((m) => m.api === "openai-completions"))
 
   balanceRequestCount = 0
-  const full = await first.runCommand("balance-1", "/deepseek-balance")
+  const full = await first.runCommand("balance-1", "/deepseek-usage")
   assert.match(full.message, /^DeepSeek balance: available$/m)
   assert.match(full.message, /CNY\s+total 110\.00 · granted 10\.00 · topped-up 100\.00/)
   assert.match(full.message, /USD\s+total 5\.00 · granted 0\.00 · topped-up 5\.00/)
@@ -309,7 +311,7 @@ try {
   assert.equal(balanceRequestCount, 1)
 
   console.log("[pi-local] a repeat within 5s is throttled without a new request")
-  const throttled = await first.runCommand("balance-2", "/deepseek-balance")
+  const throttled = await first.runCommand("balance-2", "/deepseek-usage")
   assert.match(throttled.message, /wait \ds before checking again/i)
   assert.equal(balanceRequestCount, 1)
 
@@ -338,7 +340,7 @@ try {
   console.log("[pi-local] is_available=false renders an insufficient warning")
   scenario = "insufficient"
   const second = startRpcSession()
-  const insufficient = await second.runCommand("balance-insufficient", "/deepseek-balance")
+  const insufficient = await second.runCommand("balance-insufficient", "/deepseek-usage")
   assert.match(insufficient.message, /^DeepSeek balance: insufficient balance for API calls$/m)
   assert.match(insufficient.message, /CNY\s+total 0\.00/)
   second.close()
@@ -347,7 +349,7 @@ try {
   console.log("[pi-local] a 401 surfaces a clear error notification")
   scenario = "unauthorized"
   const third = startRpcSession()
-  const unauthorized = await third.runCommand("balance-401", "/deepseek-balance")
+  const unauthorized = await third.runCommand("balance-401", "/deepseek-usage")
   assert.equal(
     unauthorized.notifyType,
     "error",
@@ -358,7 +360,7 @@ try {
   third.close()
 
   // -- Session 4: query while the main agent request is still pending --------
-  console.log("[pi-local] /deepseek-balance runs while the main agent is busy")
+  console.log("[pi-local] /deepseek-usage runs while the main agent is busy")
   scenario = "full"
   const fourth = startRpcSession()
   fourth.send({
@@ -396,7 +398,7 @@ try {
   assert.deepEqual(lastChatPayload.thinking, { type: "enabled" })
 
   balanceRequestCount = 0
-  const duringBusyRun = await fourth.runCommand("balance-busy", "/deepseek-balance")
+  const duringBusyRun = await fourth.runCommand("balance-busy", "/deepseek-usage")
   assert.match(duringBusyRun.message, /^DeepSeek balance: available$/m)
   assert.equal(balanceRequestCount, 1)
   assert.equal(chatRequestCount, previousChatRequestCount + 1)

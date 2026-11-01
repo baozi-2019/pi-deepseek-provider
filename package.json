@@ -1,7 +1,7 @@
 {
   "name": "pi-deepseek-provider",
   "version": "0.1.0",
-  "description": "pi extension that connects DeepSeek as a self-contained `deepseek` provider (OpenAI Chat Completions API) with /deepseek-balance and /deepseek-refresh",
+  "description": "pi extension that connects DeepSeek as a self-contained `deepseek` provider (OpenAI Chat Completions API) with /deepseek-usage and /deepseek-refresh",
   "type": "module",
   "keywords": [
     "pi-package",

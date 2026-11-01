@@ -1,6 +1,6 @@
 # pi-deepseek-provider
 
-为 [pi](https://github.com/earendil-works/pi) 提供的 DeepSeek 自研 provider：以 **OpenAI Chat Completions 协议**接入 [DeepSeek API](https://api-docs.deepseek.com/zh-cn/)（`https://api.deepseek.com`），支持 API Key 认证，并提供 `/deepseek-balance` 账户余额查询、`/deepseek-refresh` 模型列表刷新。
+为 [pi](https://github.com/earendil-works/pi) 提供的 DeepSeek 自研 provider：以 **OpenAI Chat Completions 协议**接入 [DeepSeek API](https://api-docs.deepseek.com/zh-cn/)（`https://api.deepseek.com`），支持 API Key 认证，并提供 `/deepseek-usage` 账户余额查询、`/deepseek-refresh` 模型列表刷新。
 
 本扩展注册的 provider 与 pi 内置的 `deepseek` provider **同名组合、互为补充**：注册 id 仍为 `deepseek`，凭据与内置集成一致（`DEEPSEEK_API_KEY` 环境变量、`/login` 粘贴 API Key 写入的 auth.json `deepseek` 条目），模型目录由本扩展接管（内置静态目录 + 在线刷新 + 能力元数据），内置的请求实现与认证流程继续复用。卸载扩展后自动回落到 pi 内置目录。
 
@@ -70,7 +70,7 @@ pi -p "hello" --model deepseek/deepseek-flash
 
 | 命令                | 作用                                                                                                                                           |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/deepseek-balance` | 查询账户余额（官方 `GET /user/balance`）：可用状态 + 每种货币的总余额 / 赠金 / 充值余额；主 agent 生成期间也可查询，5 秒防抖                   |
+| `/deepseek-usage`   | 查询账户额度：可用状态 + 每种货币的总余额 / 赠金 / 充值余额（官方 `GET /user/balance`）；主 agent 生成期间也可查询，5 秒防抖                   |
 | `/deepseek-refresh` | 在线拉取模型列表（官方 `GET /models`，返回上下文窗口、输出上限、输入模态、effort 档位等元数据）并报告新增/移除；失败回退内置静态目录；5 秒防抖 |
 
 余额输出示例：

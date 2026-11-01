@@ -1,5 +1,5 @@
 /**
- * Mode-aware command output. TUI balance results are durable custom entries,
+ * Mode-aware command output. TUI usage results are durable custom entries,
  * which render immediately without entering the agent transcript or steering
  * queue. Other UI output uses notifications; headless modes use stdout/stderr.
  *
@@ -8,7 +8,7 @@
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent"
 
-export const DEEPSEEK_BALANCE_ENTRY = "deepseek-balance"
+export const DEEPSEEK_USAGE_ENTRY = "deepseek-usage"
 
 export type EmitKind = "info" | "warning" | "error"
 

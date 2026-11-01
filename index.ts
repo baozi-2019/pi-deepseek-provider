@@ -7,7 +7,7 @@
  *   composes over pi's built-in provider: the same `DEEPSEEK_API_KEY` env
  *   var and `/login` flow keep working, while the model catalog is replaced
  *   by the extension's static list (with remote refresh).
- * - `/deepseek-balance` renders the account balance (documented
+ * - `/deepseek-usage` renders the account balance (documented
  *   GET /user/balance), CNY/USD per-currency lines.
  * - `/deepseek-refresh` re-fetches the model list (documented GET /models,
  *   which returns capability metadata), falling back to the built-in static
@@ -27,7 +27,7 @@ import {
   DEEPSEEK_PROVIDER,
   getDeepSeekApiKey,
 } from "./src/credentials.ts"
-import { DEEPSEEK_BALANCE_ENTRY, type EmitKind, makeEmit } from "./src/emit.ts"
+import { DEEPSEEK_USAGE_ENTRY, type EmitKind, makeEmit } from "./src/emit.ts"
 import {
   getLastModelsRefresh,
   refreshDeepSeekModels,
@@ -50,9 +50,9 @@ export default function (pi: ExtensionAPI) {
   const balanceThrottle = createBalanceThrottle()
   const refreshThrottle = createBalanceThrottle()
 
-  pi.registerEntryRenderer<{ text: string }>(DEEPSEEK_BALANCE_ENTRY, (entry, _options, theme) => {
+  pi.registerEntryRenderer<{ text: string }>(DEEPSEEK_USAGE_ENTRY, (entry, _options, theme) => {
     const box = new Box(1, 1, (text) => theme.bg("customMessageBg", text))
-    box.addChild(new Text(entry.data?.text ?? "DeepSeek balance unavailable", 0, 0))
+    box.addChild(new Text(entry.data?.text ?? "DeepSeek usage unavailable", 0, 0))
     return box
   })
 
@@ -72,15 +72,15 @@ export default function (pi: ExtensionAPI) {
   })
 
   // -------------------------------------------------------------------------
-  // /deepseek-balance
+  // /deepseek-usage
   // -------------------------------------------------------------------------
 
-  pi.registerCommand("deepseek-balance", {
-    description: "Show the DeepSeek account balance (CNY/USD, granted vs topped-up)",
+  pi.registerCommand("deepseek-usage", {
+    description: "Show the DeepSeek account usage: balance per currency (granted vs topped-up)",
     handler: async (_args, ctx) => {
       // Balance is independent of the active agent run. Do not wait for idle:
       // pi executes extension commands immediately even while streaming.
-      const emit = makeEmit(pi, ctx, DEEPSEEK_BALANCE_ENTRY)
+      const emit = makeEmit(pi, ctx, DEEPSEEK_USAGE_ENTRY)
 
       const apiKey = requireApiKey(emit)
       if (!apiKey) return
@@ -88,7 +88,7 @@ export default function (pi: ExtensionAPI) {
       const slot = balanceThrottle.tryAcquire()
       if (!slot.allowed) {
         emit(
-          `DeepSeek balance was just fetched. Please wait ${Math.ceil(slot.retryAfterMs / 1000)}s before checking again.`,
+          `DeepSeek usage was just fetched. Please wait ${Math.ceil(slot.retryAfterMs / 1000)}s before checking again.`,
           "warning",
         )
         return
