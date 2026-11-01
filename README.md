@@ -25,12 +25,12 @@ pi remove git:github.com/baozi-2019/pi-deepseek-provider
 
 内置 4 个模型，对齐[官方模型与价格文档](https://api-docs.deepseek.com/zh-cn/quick_start/pricing)：
 
-| 模型 ID                    | 版本                | 上下文 | 最大输出 | 输入          | 思考档位              |
-| -------------------------- | ------------------- | ------ | -------- | ------------- | --------------------- |
-| `deepseek-flash`           | V4.1 Flash          | 1M     | 384K     | 文本 + 图像   | off/low/high/max      |
-| `deepseek-v4-pro`          | V4 Pro              | 1M     | 384K     | 文本          | off/high/max          |
-| `deepseek-v4-flash`        | 旧名（已下线，转由 V4.1 Flash 服务） | 1M | 384K | 文本    | off/low/high/max      |
-| `deepseek-v4-flash-vision-exp` | 旧名（已下线，转由 V4.1 Flash 服务） | 1M | 384K | 文本 + 图像 | off/low/high/max |
+| 模型 ID                        | 版本                                 | 上下文 | 最大输出 | 输入        | 思考档位         |
+| ------------------------------ | ------------------------------------ | ------ | -------- | ----------- | ---------------- |
+| `deepseek-flash`               | V4.1 Flash                           | 1M     | 384K     | 文本 + 图像 | off/low/high/max |
+| `deepseek-v4-pro`              | V4 Pro                               | 1M     | 384K     | 文本        | off/high/max     |
+| `deepseek-v4-flash`            | 旧名（已下线，转由 V4.1 Flash 服务） | 1M     | 384K     | 文本        | off/low/high/max |
+| `deepseek-v4-flash-vision-exp` | 旧名（已下线，转由 V4.1 Flash 服务） | 1M     | 384K     | 文本 + 图像 | off/low/high/max |
 
 官方说明：旧模型名仍可调用，请求由 DeepSeek-V4.1-Flash 提供服务并按 Flash 价格计费，所以两个旧名保留在目录中。
 
@@ -68,10 +68,10 @@ pi -p "hello" --model deepseek/deepseek-flash
 
 ## 命令
 
-| 命令                 | 作用                                                                                                                                     |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `/deepseek-balance`  | 查询账户余额（官方 `GET /user/balance`）：可用状态 + 每种货币的总余额 / 赠金 / 充值余额；主 agent 生成期间也可查询，5 秒防抖               |
-| `/deepseek-refresh`  | 在线拉取模型列表（官方 `GET /models`，返回上下文窗口、输出上限、输入模态、effort 档位等元数据）并报告新增/移除；失败回退内置静态目录；5 秒防抖 |
+| 命令                | 作用                                                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/deepseek-balance` | 查询账户余额（官方 `GET /user/balance`）：可用状态 + 每种货币的总余额 / 赠金 / 充值余额；主 agent 生成期间也可查询，5 秒防抖                   |
+| `/deepseek-refresh` | 在线拉取模型列表（官方 `GET /models`，返回上下文窗口、输出上限、输入模态、effort 档位等元数据）并报告新增/移除；失败回退内置静态目录；5 秒防抖 |
 
 余额输出示例：
 
@@ -85,10 +85,10 @@ DeepSeek balance: available
 
 ## 环境变量
 
-| 变量                 | 用途                                     | 默认值                      |
-| -------------------- | ---------------------------------------- | --------------------------- |
-| `DEEPSEEK_API_KEY`   | DeepSeek API Key（最高优先级）           | 无                          |
-| `DEEPSEEK_API_BASE`  | API 根地址覆盖（代理 / 测试用）          | `https://api.deepseek.com`  |
+| 变量                | 用途                            | 默认值                     |
+| ------------------- | ------------------------------- | -------------------------- |
+| `DEEPSEEK_API_KEY`  | DeepSeek API Key（最高优先级）  | 无                         |
+| `DEEPSEEK_API_BASE` | API 根地址覆盖（代理 / 测试用） | `https://api.deepseek.com` |
 
 `DEEPSEEK_API_BASE` 主要用于测试与本地 mock。修改后需 `/reload` 或重启生效（baseUrl 在扩展加载时确定）。
 
